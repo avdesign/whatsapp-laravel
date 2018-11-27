@@ -23,6 +23,8 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
     Route::post('login_vendor', 'AuthController@loginFirebase')->name('login_vendor');
     Route::post('refresh', 'AuthController@refresh')->name('refresh');
 
+    Route::post('customers/phone_numbers', 'CustomerController@requestPhoneNumberUpdate');
+    Route::patch('customers/phone_numbers/{token}', 'CustomerController@updatePhoneNumber');
     Route::resource('customers', 'CustomerController', ['only' => ['store']]);
 
     /** Vendedores e Usuários Autenticados */

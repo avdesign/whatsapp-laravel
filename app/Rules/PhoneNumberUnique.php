@@ -50,6 +50,6 @@ class PhoneNumberUnique implements Rule
      */
     public function message()
     {
-        return trans('O número de telefone já existe em nosso sistema');
+        return 'O número de telefone já existe em nosso sistema';
     }
 }

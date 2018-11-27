@@ -15,6 +15,43 @@ class UserProfile extends Model
 
     protected $fillable = ['phone_number', 'photo'];
 
+
+    /**
+     * Obter token para alteração do número do telefone.
+     *
+     * @param UserProfile $profile
+     * @param $phoneNumber
+     * @return string
+     */
+    public static function createTokenToChangePhoneNumber(UserProfile $profile, $phoneNumber): string
+    {
+       $token = base64_encode($phoneNumber);
+       $profile->phone_number_token_change = $token;
+       $profile->save();
+       return $token;
+
+    }
+
+    /**
+     * Faz atualização do número do telefone
+     *
+     * @param $token
+     * @return UserProfile
+     */
+    public static function updatePhoneNumber($token): UserProfile
+    {
+        $profile = UserProfile::where('phone_number_token_change', $token)->firstOrFail();
+        $phoneNumber = base64_decode($token);
+        $profile->phone_number = $phoneNumber;
+        $profile->phone_number_token_change = null;
+        $profile->save();
+
+
+
+        return $profile;
+    }
+
+
     /**
      * Salvar ou Editar perfil do usuário
      *

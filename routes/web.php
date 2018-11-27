@@ -26,3 +26,11 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('passw
 */
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+/**
+ * Confirmação de alteração do número do telefone
+ */
+Route::name('customers.web_phone_number_update')
+    ->get('customers/web_phone_number_update/{token}', function ($token){
+        return view('customer.phone_number_change', compact('token'));
+    });
