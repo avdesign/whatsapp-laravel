@@ -93,17 +93,6 @@ class UserProfile extends Model
     }
 
     /**
-     * Caminho absoluto do diretório da pasta de  fotos do usuário
-     *
-     * @return string
-     */
-    public static function photosDir()
-    {
-        $dir = self::DIR_USER_PHOTO;
-        return $dir;
-    }
-
-    /**
      * Upload de apenas uma photo, não é obrigatória
      *
      * @param UploadedFile|null $photo
@@ -127,7 +116,7 @@ class UserProfile extends Model
         if (!$photo) {
             return;
         }
-        $path = self::photoPath($photo);
+        $path = self::photoPath();
         $photoPath = "{$path}/{$photo->hashName()}";
         if (file_exists($photoPath)) {
             \File::delete($photoPath);
