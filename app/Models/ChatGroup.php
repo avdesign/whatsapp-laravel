@@ -10,7 +10,6 @@ use Illuminate\Http\UploadedFile;
 class ChatGroup extends Model
 {
     use SoftDeletes;
-
     const BASE_PATH = 'app/public';
     const DIR_CHAT_GROUPS = 'chat_groups';
     const CHAT_GROUP_PHOTO_PATH = self::BASE_PATH . '/' . self::DIR_CHAT_GROUPS;
@@ -41,13 +40,7 @@ class ChatGroup extends Model
         return $chatGroup;
     }
 
-    /**
-     * Alterar nome ou foto do grupo
-     *
-     * @param array $data
-     * @return ChatGroup
-     * @throws \Exception
-     */
+
     public function updateWithPhoto(array $data): ChatGroup
     {
         try {
@@ -70,12 +63,43 @@ class ChatGroup extends Model
     }
 
 
+
+    /**
+     * Alterar nome ou foto do grupo
+     *
+     * @param array $data
+     * @return ChatGroup
+     * @throws \Exception
+     */
+    public function updateWithPhoto2(array $data): ChatGroup
+    {
+        try {
+            if (isset($data['photo'])) {
+                self::uploadPhoto($data['photo']);
+                $this->deletePhoto();
+                $data['photo'] = $data['photo']->hashName();
+            } else {
+                unset($data['photo']);
+            }
+            \DB::beginTransaction();
+            //dd($this->fill($data));
+            $this->fill($data)->save();
+            \DB::commit();
+        } catch (\Exception $e) {
+            if (isset($data['photo'])) {
+                self::deleteFile($data['photo']);
+            }
+            \DB::rollBack();
+            throw $e;
+        }
+        return $this;
+    }
+
     private static function uploadPhoto(UploadedFile $photo)
     {
         $dir = self::photoDir();
         $photo->store($dir, ['disk' => 'public']);
     }
-
 
     private static function deleteFile(UploadedFile $photo)
     {
@@ -86,20 +110,17 @@ class ChatGroup extends Model
         }
     }
 
-
-    private function deletePhoto()
-    {
+    private function deletePhoto(){
         $dir = self::photoDir();
         \Storage::disk('public')->delete("{$dir}/{$this->photo}");
     }
+
 
     private static function photoPath()
     {
         $path = self::CHAT_GROUP_PHOTO_PATH;
         return storage_path($path);
     }
-
-
 
     private static function photoDir()
     {
@@ -112,6 +133,16 @@ class ChatGroup extends Model
         $path = self::photoDir();
         return asset("storage/{$path}/{$this->photo}");
     }
+
+    /**
+     * Relacionamento muitos para muitos
+     *
+     * @return BelongsToMany
+     */
+    public function users(){
+        return $this->belongsToMany(User::class);
+    }
+
 
 
 }
