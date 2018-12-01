@@ -3,7 +3,6 @@
 use Illuminate\Database\Seeder;
 use CodeShopping\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use CodeShopping\Models\UserProfile;
 
 
 class UsersTableSeeder extends Seeder
@@ -15,7 +14,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        \File::deleteDirectories('storage/app/public/users/photos', true);
+        \File::deleteDirectory(\CodeShopping\Models\UserProfile::photoPath(), true);
         factory(User::class, 1)
             ->create([
                 'email' => 'admin@user.com',
@@ -28,6 +27,9 @@ class UsersTableSeeder extends Seeder
                     'photo' => $this->getAdminPhoto()
                 ]);
                 Model::unguard();
+                // Salvar  o id do user do Firebase
+                $user->profile->firebase_uid = 'EgzAu3ep4rcpXIUDkJNyiCWqp433';
+                $user->profile->save();
             });
         factory(User::class, 1)
             ->create([
@@ -41,11 +43,19 @@ class UsersTableSeeder extends Seeder
                     'photo' => $this->getAdminPhoto()
                 ]);
                 Model::unguard();
+                // Salvar  o id do user do Firebase
+                $user->profile->firebase_uid = 'sjCCUOLpJkewgNK9oujrK0CGjnC2';
+                $user->profile->save();
             });
         factory(User::class, 20)
             ->create([
                 'role' => User::ROLE_CUSTUMER
-            ]);
+            ])->each(function ($user, $key){
+                // Criar número de telefone aleatório
+                $user->profile->phone_number = "+165055512{$key}";
+                $user->profile->firebase_uid = "user-{$key}";
+                $user->profile->save();
+            });
 
     }
 

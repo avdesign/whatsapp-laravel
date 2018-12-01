@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace CodeShopping\Models;
 
+use CodeShopping\Firebase\FirebaseSync;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 
 class ChatGroup extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, FirebaseSync;
+
     const BASE_PATH = 'app/public';
     const DIR_CHAT_GROUPS = 'chat_groups';
     const CHAT_GROUP_PHOTO_PATH = self::BASE_PATH . '/' . self::DIR_CHAT_GROUPS;
@@ -128,11 +130,6 @@ class ChatGroup extends Model
         return $dir;
     }
 
-    public function getPhotoUrlAttribute()
-    {
-        $path = self::photoDir();
-        return asset("storage/{$path}/{$this->photo}");
-    }
 
     /**
      * Relacionamento muitos para muitos
@@ -142,6 +139,44 @@ class ChatGroup extends Model
     public function users(){
         return $this->belongsToMany(User::class);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sincronia com o Firebase
+    |--------------------------------------------------------------------------
+    |
+    | syncFbRemove() - faz uma atualização sobrescrevendo o método tsyncFbSet()
+    | syncFbSet() - remove o campo photo no BD Firebase e passa os dados da referência photo_url
+    | getPhotoUrlAttribute() - retorna a url completa da foto
+    | getPhotoUrlBaseAttribute() - acrescenta a base e não a url completa da foto
+    |
+    */
+    protected function syncFbRemove()
+    {
+        $this->syncFbSet();
+    }
+
+    protected function syncFbSet()
+    {
+        $data = $this->toArray();
+        $data['photo_url'] = $this->photo_url_base;
+        unset($data['photo']);
+        // para alterar os campos usar set($data) para não fazer manual
+        $this->getModelReference()->set($data);
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return asset("storage/{$this->photo_url_base}");
+    }
+
+    public function getPhotoUrlBaseAttribute()
+    {
+        $path = self::photoDir();
+        return "{$path}/{$this->photo}";
+    }
+
+
 
 
 

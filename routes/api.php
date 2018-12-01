@@ -37,8 +37,9 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
             Route::name('logout')->post('logout', 'AuthController@logout');
             Route::name('me')->post('me', 'AuthController@me');
 
-            Route::patch('products/{product}/restore', 'ProductController@restore');
             Route::resource('users', 'UserController', ['except' => ['create', 'edit']]);
+
+            Route::patch('products/{product}/restore', 'ProductController@restore');
             Route::resource('products', 'ProductController', ['except' => ['create', 'edit']]);
             Route::resource('categories', 'CategoryController', ['except' => ['create', 'edit']]);
             Route::resource('products.categories', 'ProductCategoryController', ['only' => ['index', 'store', 'destroy']]);
@@ -47,6 +48,7 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
             Route::resource('outputs', 'ProductOutputController', ['only' => ['index', 'store', 'show']]);
 
             Route::resource('chat_groups', 'ChatGroupController', ['except' => ['create', 'edit']]);
+            Route::resource('chat_groups.users', 'ChatGroupUserController', ['only' => ['index', 'store', 'destroy']]);
 
         });
 

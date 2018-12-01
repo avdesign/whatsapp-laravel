@@ -17,6 +17,7 @@ class CreateUserProfilesTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->string('firebase_uid')->nullable();
             $table->string('phone_number', 20)->unique();
             $table->string('phone_number_token_change')->nullable();
             $table->string('photo')->nullable();

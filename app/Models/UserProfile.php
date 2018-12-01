@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace CodeShopping\Models;
 
+use CodeShopping\Firebase\FirebaseSync;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 
 class UserProfile extends Model
 {
+    use FirebaseSync;
+
     const BASE_PATH = 'app/public';
     const DIR_USERS = 'users';
     const DIR_USER_PHOTO = self::DIR_USERS . '/photos';
@@ -144,20 +147,49 @@ class UserProfile extends Model
     }
 
     /**
-     * Retorna o url da photo ou gravatar
+     * Retorna $this->photo_url_base} = getPhotoUrlBaseAttribute()
      *
      * @return string
      */
     public function getPhotoUrlAttribute()
     {
         $path = self::photoDir();
-        return $this->photo ? asset("storage/{$path}/{$this->photo}"):
+        return $this->photo ?
+            asset("storage/{$path}/{$this->photo_url_base}"):
+            $this->photo_url_base;
+    }
+
+
+    /**
+     * Retorna o url parte da url
+     *
+     * @return string
+     */
+    public function getPhotoUrlBaseAttribute()
+    {
+        $path = self::photoDir();
+        return $this->photo ?
+            "{$path}/{$this->photo}" :
             'https://www.gravatar.com/avatar/nouser.jpg';
     }
+
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    |  Sobrescrever sincronia com o Firebase
+    |--------------------------------------------------------------------------
+    | syncFbSet() -
+    |
+    */
+
+    protected function syncFbSet()
+    {
+        $this->user->syncFbSetCustom();
     }
 
 
