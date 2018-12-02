@@ -144,7 +144,9 @@ class User extends Authenticatable implements JWTSubject
             'profile' => [
                 'has_photo' => $this->profile->photo ? true : false,
                 'photo_url' => $this->profile->photo_url,
-                'phone_number' => $this->profile->phone_number
+                'phone_number' => $this->profile->phone_number,
+                'firebase_uid' => $this->profile->firebase_uid
+
             ]
         ];
     }
