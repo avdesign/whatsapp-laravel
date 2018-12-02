@@ -30,6 +30,27 @@ trait FirebaseSync
             $model->stncFb->remove();
         });
 
+        /**
+         * Sincronizando membros de grupo no Firebase conteudo=5387
+         * Versão instalada 3.0.0 - Laravel 5.7
+         * https://github.com/fico7489/laravel-pivot
+        */
+
+        /** Verifica se existe o mêtodo na class no model */
+        if (method_exists(__CLASS__, 'pivotAttached')) {
+            static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttribute) {
+                //dd($model, $relationName, $pivotIds, $pivotIdsAttribute);
+                $model->syncPivotAttached($model, $relationName, $pivotIds, $pivotIdsAttribute);
+            });
+        }
+
+        if (method_exists(__CLASS__, 'pivotAttached')) {
+            static::pivotDetached(function ($model, $relationName, $pivotIds) {
+                $model->syncPivotDetached($model, $relationName, $pivotIds);
+            });
+        }
+
+
     }
 
     protected function syncFbCreate()
@@ -51,6 +72,32 @@ trait FirebaseSync
     {
         $this->getModelReference()->remove();
     }
+
+    /**
+     * Confirma se todos os métodos foram implementados.
+     *
+     * @param $model
+     * @param $relationName
+     * @param $pivotIds
+     * @param $pivotIdsAttribute
+     * @throws \Exception
+     */
+    protected function syncPivotAttached($model, $relationName, $pivotIds, $pivotIdsAttribute)
+    {
+        throw new \Exception('syncPivotAttached: Não Implentado');
+    }
+
+    /**
+     * @param $model
+     * @param $relationName
+     * @param $pivotIds
+     * @throws \Exception
+     */
+    protected function syncPivotDetached($model, $relationName, $pivotIds)
+    {
+        throw new \Exception('syncPivotDetached: Não Implentado');
+    }
+
 
     /**
      * Referencia Base

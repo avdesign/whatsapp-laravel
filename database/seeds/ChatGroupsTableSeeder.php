@@ -28,7 +28,7 @@ class ChatGroupsTableSeeder extends Seeder
         $customerDefault = User::whereEmail('customer@user.com')->first();
         // Não permitir outros clientes a não seja que padrão  poderia passar outros também
         /** @var \Illuminate\Database\Eloquent\Collection $otherCustomers */
-        $otherCustomers = User::whereRole(User::ROLE_CUSTUMER)
+        $otherCustomers = User::whereRole(User::ROLE_CUSTOMER)
                 ->whereNotIn('id', [$customerDefault->id])->get();
 
         factory(ChatGroup::class, 10)

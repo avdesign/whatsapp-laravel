@@ -34,7 +34,7 @@ class UsersTableSeeder extends Seeder
         factory(User::class, 1)
             ->create([
                 'email' => 'customer@user.com',
-                'role' => User::ROLE_CUSTUMER
+                'role' => User::ROLE_CUSTOMER
             ])
             ->each(function ($user) {
                 Model::reguard();
@@ -49,7 +49,7 @@ class UsersTableSeeder extends Seeder
             });
         factory(User::class, 20)
             ->create([
-                'role' => User::ROLE_CUSTUMER
+                'role' => User::ROLE_CUSTOMER
             ])->each(function ($user, $key){
                 // Criar número de telefone aleatório
                 $user->profile->phone_number = "+165055512{$key}";

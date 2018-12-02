@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable, SoftDeletes, Filterable, FirebaseSync;
 
     const ROLE_SELLER = 1;
-    const ROLE_CUSTUMER = 2;
+    const ROLE_CUSTOMER = 2;
 
     /**
      * @var array
@@ -73,7 +73,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $data['password'] = bcrypt(str_random(16));
         $user = User::create($data);
-        $user->role = User::ROLE_CUSTUMER;
+        $user->role = User::ROLE_CUSTOMER;
         $user->save();
         return $user;
     }
@@ -199,6 +199,9 @@ class User extends Authenticatable implements JWTSubject
             ]);
         }
     }
+
+
+
 
 
 }

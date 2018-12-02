@@ -24,10 +24,14 @@ class UserController extends Controller
     {
         /** @var UserFilter $filter */
         $filter = app(UserFilter::class);
+        $query = User::query();
+        $query = $this->onlyTrashedIfRequested($request, $query);
         /** @var Builder $filterQuery */
         $filterQuery = User::filtered($filter);
-        $users = $request->has('all') ? $filterQuery->get() : $filterQuery->paginate();
-        // $users = $filterQuery->get();
+        $users = $filter->hasFilterParameter() ?
+            $filterQuery->get() :
+            $filterQuery->paginate(10);
+
         return UserResource::collection($users);
     }
 

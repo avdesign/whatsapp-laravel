@@ -3,14 +3,16 @@ declare(strict_types=1);
 
 namespace CodeShopping\Models;
 
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use CodeShopping\Firebase\FirebaseSync;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Illuminate\Http\UploadedFile;
 
 class ChatGroup extends Model
 {
-    use SoftDeletes, FirebaseSync;
+    use SoftDeletes, FirebaseSync, PivotEventTrait;
 
     const BASE_PATH = 'app/public';
     const DIR_CHAT_GROUPS = 'chat_groups';
@@ -176,8 +178,43 @@ class ChatGroup extends Model
         return "{$path}/{$this->photo}";
     }
 
+    /**
+     * Enviar relacionamentos para o Firebase
+     *
+     * @param $model
+     * @param $relationName
+     * @param $pivotIds
+     * @param $pivotIdsAttribute
+     */
+    protected function syncPivotAttached($model, $relationName, $pivotIds, $pivotIdsAttribute)
+    {
+        $users = User::whereIn('id', $pivotIds)->get();
+        $data = [];
+        foreach ($users as $user) {
+            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = true;
+        }
+        $this->getFirebaseDatabase()->getReference()->update($data);
+    }
 
-
+    /**
+     * Sincronizando exclusão dos membros de um grupo
+     *
+     * @param $model
+     * @param $relationName
+     * @param $pivotIds
+     */
+    protected function syncPivotDetached($model, $relationName, $pivotIds)
+    {
+        $users = User::whereIn('id', $pivotIds)->get();
+        $data = [];
+        foreach ($users as $user) {
+            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = null;
+        }
+        //remove multipols usuários
+        $this->getFirebaseDatabase()->getReference()->update($data);
+        // remove só um usuário
+        //$this->getFirebaseDatabase()->getReference()->remove();
+    }
 
 
 }
