@@ -24,7 +24,7 @@ class ChatGroupRequest extends FormRequest
     public function rules()
     {
 
-        dd($this->input('photo'));
+        //dd($this->input('photo'));
 
 
         if ($this->method() == 'POST') {
