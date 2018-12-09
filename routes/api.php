@@ -32,6 +32,9 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
 
         Route::patch('profile', 'UserProfileController@update');
 
+        Route::resource('chat_groups.messages', 'ChatMessageFbController',['only' => ['store']]);
+
+        //IS SELLER
         Route::group(['middleware' => ['can:is_seller']], function () {
             /** Permissão Vendedores */
             Route::name('logout')->post('logout', 'AuthController@logout');

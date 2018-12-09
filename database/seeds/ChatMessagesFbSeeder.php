@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\Collection;
-use CodeShopping\Firebase\ChatMenssageFb;
+use CodeShopping\Firebase\ChatMessageFb;
 use CodeShopping\Models\ChatGroup;
 use CodeShopping\Models\User;
 use Illuminate\Database\Seeder;
@@ -20,15 +20,14 @@ class ChatMessagesFbSeeder extends Seeder
         /** @var Collection $chatGroups */
         $chatGroups = ChatGroup::all();
         $users = User::all();
-        $chatMessage = new ChatMenssageFb();
+        $chatMessage = new ChatMessageFb();
 
         $chatGroups->each(function ($group) use($users, $chatMessage){
-
             // Remover as a msg ref ao grupo
             $chatMessage->deleteMessages($group);
 
             foreach (range(1, 10) as $value) {
-                $content = FakerFactory::create()->sentence(10);
+                $content = FakerFactory::create()->sentence(3);
                 $type = 'text';
 
                 $chatMessage->create([
@@ -38,7 +37,6 @@ class ChatMessagesFbSeeder extends Seeder
                     'firebase_uid' => $users->random()->profile->firebase_uid
                 ]);
             }
-
         });
 
 

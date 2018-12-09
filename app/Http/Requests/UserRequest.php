@@ -23,10 +23,26 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
+        if ($this->method() == 'POST') {
+            return [
+                'password' => 'required|min:4|max:16'
+            ];
+        }
+
+        if ($this->method() == 'PUT') {
+            $password = $this->input('password');
+            if (!empty($password) ) {
+                return [
+                    'password' => 'required|min:4|max:16'
+                ];
+            }
+        }
+
+
+        $userId = \Auth::guard('api')->user()->id;
         return [
             'name' => 'required|max:255',
-            'email' => 'required|max:50|email|unique:users,email',
-            'password' => 'required|min:4|max:16',
+            'email' => "required|max:50|email|unique:users,email,{$userId},id"
         ];
     }
 }

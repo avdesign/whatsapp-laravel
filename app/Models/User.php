@@ -146,7 +146,6 @@ class User extends Authenticatable implements JWTSubject
                 'photo_url' => $this->profile->photo_url,
                 'phone_number' => $this->profile->phone_number,
                 'firebase_uid' => $this->profile->firebase_uid
-
             ]
         ];
     }
@@ -196,6 +195,7 @@ class User extends Authenticatable implements JWTSubject
             $reference = $database->getReference($path);
             $reference->set([
                 'name' => $this->name,
+                'role' => $this->role,
                 'photo_url' => $this->profile->photo_url_base,
                 'deleted_at' => $this->deleted // para saber se o user já foi excuido
             ]);

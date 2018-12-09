@@ -85,6 +85,21 @@ class UserProfile extends Model
     }
 
     /**
+     * Excluir photo na atualização o perfil
+     *
+     * @param UserProfile $profile
+     */
+    private static function deletePhoto(UserProfile $profile)
+    {
+        if (!$profile->photo) {
+            return;
+        }
+        $dir = self::photoDir();
+        \Storage::disk('public')->delete("{$dir}/{$profile->photo}");
+    }
+
+
+    /**
      * Caminho absoluto da pasta das fotos do usuário
      *
      * @return string
@@ -126,19 +141,6 @@ class UserProfile extends Model
         }
     }
 
-    /**
-     * Excluir photo na atualização o perfil
-     *
-     * @param UserProfile $profile
-     */
-    private static function deletePhoto(UserProfile $profile)
-    {
-        if (!$profile->photo) {
-            return;
-        }
-        $dir = self::photoDir();
-        \Storage::disk('public')->delete("{$dir}/{$profile->photo}");
-    }
 
     public static function photoDir()
     {
@@ -153,9 +155,8 @@ class UserProfile extends Model
      */
     public function getPhotoUrlAttribute()
     {
-        $path = self::photoDir();
         return $this->photo ?
-            asset("storage/{$path}/{$this->photo_url_base}"):
+            asset("storage/{$this->photo_url_base}"):
             $this->photo_url_base;
     }
 
