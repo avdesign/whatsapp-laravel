@@ -30,7 +30,7 @@ class ChatMessageFb
                 $this->upload($data['content']);
                 /** @var UploadedFile $uploadedFile */
                 $uploadedFile = $data['content'];
-                $fileUrl = $this->groupFilesDir() . '/' . $uploadedFile->hashName();
+                $fileUrl = $this->groupFilesDir() . '/' . $this->buildFileName($uploadedFile);
                 $data['content'] = $fileUrl;
         }
         $reference = $this->getMessagesReference();
@@ -44,11 +44,26 @@ class ChatMessageFb
 
     }
 
+    /**
+     * @param UploadedFile $file
+     */
     private function upload(UploadedFile $file)
     {
-        $file->store($this->groupFilesDir(), ['disk' => 'public']);
+        $file->storeAs($this->groupFilesDir(), $this->buildFileName($file), ['disk' => 'public']);
+    }
 
-
+    /**
+     * @param UploadedFile $file
+     * @return string
+     */
+    private function buildFileName(UploadedFile $file)
+    {
+        switch ($file->getMimeType()){
+            case 'audio/x-hx-aac-adts':
+                return "{$file->hashName()}aac";
+            default:
+                return $file->hashName();
+        }
     }
 
 
@@ -68,7 +83,7 @@ class ChatMessageFb
      */
     private function getMessagesReference()
     {
-        $path = "/chat_groups/{$this->chatGroup->id}/messages";
+        $path = "/chat_groups_messages/{$this->chatGroup->id}/messages";
         return $this->getFirebaseDatabase()->getReference($path);
 
     }

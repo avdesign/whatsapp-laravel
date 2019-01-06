@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CodeShopping\Models;
 
+
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use CodeShopping\Firebase\FirebaseSync;
@@ -158,11 +159,12 @@ class ChatGroup extends Model
         $this->syncFbSet();
     }
 
-    protected function syncFbSet()
+    protected function syncFbSet($operation = null)
     {
         $data = $this->toArray();
         $data['photo_url'] = $this->photo_url_base;
         unset($data['photo']);
+        $this->setTimestamps($data, $operation);
         // para alterar os campos usar set($data) para não fazer manual
         $this->getModelReference()->set($data);
     }
@@ -191,7 +193,7 @@ class ChatGroup extends Model
         $users = User::whereIn('id', $pivotIds)->get();
         $data = [];
         foreach ($users as $user) {
-            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = true;
+            $data["chat_groups_users/{$model->id}/{$user->profile->firebase_uid}"] = true;
         }
         $this->getFirebaseDatabase()->getReference()->update($data);
     }
@@ -208,7 +210,7 @@ class ChatGroup extends Model
         $users = User::whereIn('id', $pivotIds)->get();
         $data = [];
         foreach ($users as $user) {
-            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = null;
+            $data["chat_groups_users/{$model->id}/{$user->profile->firebase_uid}"] = null;
         }
         //remove multipols usuários
         $this->getFirebaseDatabase()->getReference()->update($data);
