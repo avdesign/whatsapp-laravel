@@ -34,14 +34,16 @@ class ChatMessageFb
                 $data['content'] = $fileUrl;
         }
         $reference = $this->getMessagesReference();
-        $reference->push([
+        $newReference = $reference->push([
             'type' => $data['type'],
             'content' => $data['content'],
             'created_at' => ['.sv' => 'timestamp'], // firebase gera timestamp
             'user_id' => $data['firebase_uid']
         ]);
 
+        $this->setLastMessage($newReference->getKey());
 
+        $this->chatGroup->updateInFb();
     }
 
     /**
@@ -77,22 +79,32 @@ class ChatMessageFb
     }
 
 
-    /**
-     * Passo a Reference do chat_groups
-     * @return \Kreait\Firebase\Database\Reference
-     */
-    private function getMessagesReference()
-    {
-        $path = "/chat_groups_messages/{$this->chatGroup->id}/messages";
-        return $this->getFirebaseDatabase()->getReference($path);
-
-    }
-
-
     public function deleteMessages(ChatGroup $chatGroup)
     {
         $this->chatGroup = $chatGroup;
         $this->getMessagesReference()->remove();
     }
+
+
+    private function setLastMessage($messageUid)
+    {
+        $path = "{$this->getChatGroupsMessageReference()}/last_message_id";
+        $reference = $this->getFirebaseDatabase()->getReference($path);
+        $reference->set($messageUid);
+    }
+
+
+    private function getMessagesReference()
+    {
+        $path = "{$this->getChatGroupsMessageReference()}/messages";
+        return $this->getFirebaseDatabase()->getReference($path);
+    }
+
+
+    private function getChatGroupsMessageReference()
+    {
+        return "/chat_groups_messages/{$this->chatGroup->id}";
+    }
+
 
 }

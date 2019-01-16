@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductPhotosTableSeeder::class);
         $this->call(ChatGroupsTableSeeder::class);
         $this->call(ChatMessagesFbSeeder::class);
+        $this->call(ChatMessagesLargeFbSeeder::class);
+
     }
 }

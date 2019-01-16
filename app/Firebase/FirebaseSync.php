@@ -31,7 +31,7 @@ trait FirebaseSync
         });
 
         static::deleted(function ($model) {
-            $model->stncFb->remove();
+            $model->syncFbRemove();
         });
 
         /**
