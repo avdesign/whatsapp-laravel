@@ -30,14 +30,13 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
     /** Vendedores e Usuários Autenticados */
     Route::group(['middleware' => ['auth:api', 'jwt.refresh']], function(){
 
+        Route::name('logout')->post('logout', 'AuthController@logout');
         Route::patch('profile', 'UserProfileController@update');
-
         Route::resource('chat_groups.messages', 'ChatMessageFbController',['only' => ['store']]);
 
         //IS SELLER
         Route::group(['middleware' => ['can:is_seller']], function () {
             /** Permissão Vendedores */
-            Route::name('logout')->post('logout', 'AuthController@logout');
             Route::name('me')->post('me', 'AuthController@me');
 
             Route::resource('users', 'UserController', ['except' => ['create', 'edit']]);
