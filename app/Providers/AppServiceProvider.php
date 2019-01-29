@@ -2,6 +2,7 @@
 
 namespace CodeShopping\Providers;
 
+use CodeShopping\Models\ChatGroupInvitation;
 use Illuminate\Support\ServiceProvider;
 
 use CodeShopping\Models\ProductInput;
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
             $product->save();
         });
 
+        // Executa quando cria
         ProductOutput::created(function($output){
             $product = $output->product;
             $product->stock -= $output->amount;
@@ -31,6 +33,12 @@ class AppServiceProvider extends ServiceProvider
                 throw new \Exception("Estoque de {$product->name} não pode ser negativo.");
             }
             $product->save();
+        });
+
+        // Executar depois de criado
+        ChatGroupInvitation::creating(function ($invitation) {
+           $invitation->slug = str_random(7);
+           $invitation->remaining = $invitation->total;
         });
     }
 

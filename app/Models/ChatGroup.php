@@ -143,6 +143,16 @@ class ChatGroup extends Model
         return $this->belongsToMany(User::class);
     }
 
+    /**
+     * Relacionamento dos convites para o grupo
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function linkInvitations()
+    {
+        return $this->hasMany(ChatGroupInvitation::class, 'group_id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Sincronia com o Firebase
