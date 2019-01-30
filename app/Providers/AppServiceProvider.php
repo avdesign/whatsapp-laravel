@@ -3,6 +3,7 @@
 namespace CodeShopping\Providers;
 
 use CodeShopping\Models\ChatGroupInvitation;
+use CodeShopping\Models\ChatInvitationUser;
 use Illuminate\Support\ServiceProvider;
 
 use CodeShopping\Models\ProductInput;
@@ -40,6 +41,44 @@ class AppServiceProvider extends ServiceProvider
            $invitation->slug = str_random(7);
            $invitation->remaining = $invitation->total;
         });
+
+        // Executar depois de alterado
+        ChatGroupInvitation::updating(function (ChatGroupInvitation $invitation) {
+            //valor antigo
+            $oldRemaining = $invitation->getOriginal('remaining');
+            //valor novo
+            $newRemaining = $invitation->remaining;
+            if($oldRemaining == $newRemaining){
+                $invitation->remaining = $invitation->total;
+            }
+        });
+
+        //Reservar vaga no grupo
+        ChatInvitationUser::created(function ($userInvitation) {
+            $linkInvitation = $userInvitation->invitation;
+            $linkInvitation->remaining -= 1;
+            $linkInvitation->save();
+        });
+
+        ChatInvitationUser::updated(function ($userInvitation) {
+            if ($userInvitation->status == ChatInvitationUser::STATUS_PENDING) {
+                return;
+            }
+
+            if ($userInvitation->status == ChatInvitationUser::STATUS_REPROVED) {
+                $linkInvitation = $userInvitation->invitation;
+                $linkInvitation->remaining += 1;
+                $linkInvitation->save();
+            }
+
+            $group = $userInvitation->invitation->group;
+            $userId = $userInvitation->user->id;
+            $group->users()->attach($userId);
+
+            // push notification
+        });
+
+
     }
 
     /**

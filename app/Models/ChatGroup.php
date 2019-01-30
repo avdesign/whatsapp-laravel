@@ -152,6 +152,16 @@ class ChatGroup extends Model
     {
         return $this->hasMany(ChatGroupInvitation::class, 'group_id');
     }
+    // Requisição de entradas dos usuários
+    public function userInvitations()
+    {
+        return $this->hasManyThrough(
+            ChatInvitationUser::class,
+            ChatGroupInvitation::class,
+            'group_id',
+            'invitation_id'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------

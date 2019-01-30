@@ -2,6 +2,7 @@
 
 namespace CodeShopping\Providers;
 
+use CodeShopping\Models\ChatGroupInvitation;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Route;
@@ -38,14 +39,6 @@ class RouteServiceProvider extends ServiceProvider
 
         parent::boot();
 
-        // Consultar Users pelo id ou pelo slug
-        Route::bind('user', function ($value) {
-            /** @var Collection $collection */
-            $query = User::query();
-            $request = app(Request::class);
-            $query = $this->onlyTrashedIfRequested($request, $query);
-            return $query->find($value);
-        });
 
         // Consultar Product pelo id ou pelo slug
         Route::bind('product', function($value){
@@ -63,6 +56,23 @@ class RouteServiceProvider extends ServiceProvider
             $collection = Category::whereId($value)->orWhere('slug', $value)->get();
             return $collection->first();
         });
+
+        // Consultar Users pelo id ou pelo slug
+        Route::bind('user', function ($value) {
+            /** @var Collection $collection */
+            $query = User::query();
+            $request = app(Request::class);
+            $query = $this->onlyTrashedIfRequested($request, $query);
+            return $query->find($value);
+        });
+
+        // Consultar Convites pelo pelo slug
+        Route::bind('invitation_slug', function ($value) {
+            return ChatGroupInvitation::where('slug', $value)->first();
+        });
+
+
+
     }
 
     /**

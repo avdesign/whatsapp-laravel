@@ -4,8 +4,11 @@ namespace CodeShopping\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ChatGroupInvitationResource extends JsonResource
+class ChatInvitationUserResource extends JsonResource
 {
+    /**
+     * @var bool
+     */
     private $isCollection;
 
     public function __construct($resource, $isCollection = false)
@@ -22,23 +25,17 @@ class ChatGroupInvitationResource extends JsonResource
      */
     public function toArray($request)
     {
-        $link = env('MOBILE_PAGE_LINK')
-            . '?link='. env('MOBILE_URL'). '/' .$this->slug
-            . '&apn='. env('MOBILE_ID')
-            . '&ibi='. env('MOBILE_ID');
-
         $data = [
             'id' => $this->id,
-            'total' => (int)$this->total,
-            'remaining' => (int)$this->remaining,
-            'link' => $link,
-            'expires_at' => $this->expires_at,
+            'user' => new UserResource($this->user),
+            'status' => (int) $this->status,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'updated_at' => $this->updated_at
         ];
-        if (!$this->isCollection) {
-            $data['group'] = new ChatGroupResource($this->group);
+        if (!$this->isCollection){
+            $data['invitation'] = new ChatGroupInvitationResource($this->invitation);
         }
+
         return $data;
     }
 }

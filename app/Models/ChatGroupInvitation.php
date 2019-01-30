@@ -21,12 +21,23 @@ class ChatGroupInvitation extends Model
      */
     public function hasInvitation()
     {
+        /** @var Carbon $expiresAt */
+        $expiresAt = $this->expires_at;
+        $expiresAt->hour(23);
+        $expiresAt->minute(59);
+        $expiresAt->second(59);
+        //dd($expiresAt);
         return $this->remaining > 0 &&
-            (!$this->expires_at or (new Carbon())->lessThanOrEqualTo("{$this->expires_at} 23:59:59"));
+            (!$this->expires_at or (new Carbon())->lessThanOrEqualTo($expiresAt));
     }
 
     public function group()
     {
         return $this->belongsTo(ChatGroup::class, 'group_id');
+    }
+
+    public function userInvitations()
+    {
+        return $this->hasMany(ChatInvitationUser::class, 'invitation_id');
     }
 }
