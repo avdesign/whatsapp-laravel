@@ -9,6 +9,7 @@
 
 namespace CodeShopping\Firebase;
 
+use CodeShopping\Events\ChatMessageSent;
 use CodeShopping\Models\ChatGroup;
 use Illuminate\Http\UploadedFile;
 
@@ -38,12 +39,17 @@ class ChatMessageFb
             'type' => $data['type'],
             'content' => $data['content'],
             'created_at' => ['.sv' => 'timestamp'], // firebase gera timestamp
-            'user_id' => $data['firebase_uid']
+            'user_id' => $data['user']->profile->firebase_uid
         ]);
 
         $this->setLastMessage($newReference->getKey());
 
         $this->chatGroup->updateInFb();
+
+        //Não enviar as msgs no console e no teste unitário
+        if (!app()->runningInConsole() && !app()->runningUnitTests()) {
+            event( new ChatMessageSent($this->chatGroup,$data['type'],$data['content'],$data['user']));
+        }
     }
 
     /**

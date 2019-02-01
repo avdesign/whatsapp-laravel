@@ -13,6 +13,7 @@
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
         "mnabialek/laravel-eloquent-filter": "^0.1.1",
+        "redjanym/php-firebase-cloud-messaging": "1.1.4",
         "tymon/jwt-auth": "dev-develop#689fcc263f6c4f650057905ae6dce441879df19b"
     },
     "require-dev": {

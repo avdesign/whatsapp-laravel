@@ -57,7 +57,7 @@ class ChatMessagesFbSeeder extends Seeder
                     'chat_group' => $group,
                     'content' => $content,
                     'type' => $type,
-                    'firebase_uid' => $users->random()->profile->firebase_uid
+                    'firebase_uid' => $users->random()
                 ]);
             }
         });
