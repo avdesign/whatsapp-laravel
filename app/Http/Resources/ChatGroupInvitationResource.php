@@ -22,9 +22,16 @@ class ChatGroupInvitationResource extends JsonResource
      */
     public function toArray($request)
     {
+        /*
+        // android e ios
         $link = env('MOBILE_PAGE_LINK')
             . '?link='. env('MOBILE_URL'). '/' .$this->slug
             . '&apn='. env('MOBILE_ID')
+            . '&ibi='. env('MOBILE_ID');
+        */
+        // só android
+        $link = env('MOBILE_PAGE_LINK')
+            . '?link='. env('MOBILE_URL'). '/' .$this->slug
             . '&ibi='. env('MOBILE_ID');
 
         $data = [

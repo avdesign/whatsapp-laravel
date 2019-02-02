@@ -6,6 +6,7 @@ namespace CodeShopping\Listeners;
 
 
 use CodeShopping\Firebase\CloudMessagingFb;
+use CodeShopping\Firebase\NotificationType;
 use CodeShopping\Events\ChatMessageSent;
 use CodeShopping\Models\UserProfile;
 use Illuminate\Support\Collection;
@@ -46,12 +47,17 @@ class SendMessagesChatGroupMembers
 
         $from = $this->event->getFrom();
         $chatGroup = $this->event->getChatGroup();
+
         /** @var CloudMessagingFb $messaging */
         $messaging = app(CloudMessagingFb::class);
         $messaging
-            ->setTitle("{$from->name} enviou uma mensagem em {$chatGroup->name}")
+            ->setTitle("{$from->name} | {$chatGroup->name}")
             ->setBody($this->getBody())
             ->setTokens($tokens)
+            ->setData([
+                'type' => NotificationType::NEW_MESSAGE,
+                'chat_group_id' => $chatGroup->id
+            ])
             ->send();
 
     }

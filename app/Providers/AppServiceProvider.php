@@ -2,8 +2,10 @@
 
 namespace CodeShopping\Providers;
 
+
 use CodeShopping\Models\ChatGroupInvitation;
 use CodeShopping\Models\ChatInvitationUser;
+use CodeShopping\Firebase\NotificationType;
 use Illuminate\Support\ServiceProvider;
 
 use CodeShopping\Models\ProductInput;
@@ -76,6 +78,26 @@ class AppServiceProvider extends ServiceProvider
             $group->users()->attach($userId);
 
             // push notification
+            $token = $userInvitation->user->profile->device_token;
+            if (!$token) {
+                return;
+            }
+            /** @var CloudMessagingFb $messaging */
+            $messaging = app(CloudMessagingFb::class);
+            $messaging
+                ->setTitle("Sua inscrição foi aprovada.")
+                ->setBody("Você esta inscrito em um novo grupo.")
+                ->setTokens([$token])
+                ->setData([
+                    'type' => NotificationType::CHAT_GROUP_SUBSRIBE,
+                    'chat_group_name' => $group->name
+                ])
+                ->send();
+
+
+
+
+
         });
 
 

@@ -23,6 +23,8 @@ class CloudMessagingFb
 
     private $tokens;
 
+    private $data = [];
+
 
     public function send()
     {
@@ -36,7 +38,8 @@ class CloudMessagingFb
 
         $message->setNotification(
             new Notification($this->title, $this->body)
-        );
+        )
+        ->setData($this->data);
 
         $client->send($message);
 
@@ -65,6 +68,16 @@ class CloudMessagingFb
     {
         $this->tokens = $tokens;
     }
+
+    /**
+     * @param array $data
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
+
+
 
 
 
