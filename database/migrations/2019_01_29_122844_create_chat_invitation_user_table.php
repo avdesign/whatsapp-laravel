@@ -18,9 +18,9 @@ class CreateChatInvitationUserTable extends Migration
             $table->increments('id');
             $table->smallInteger('status')->default(ChatInvitationUser::STATUS_PENDING);
             $table->integer('invitation_id')->unsigned();
-            $table->foreign('invitation_id')->reference('id')->on('chat_group_invitations');
+            $table->foreign('invitation_id')->references('id')->on('chat_group_invitations');
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->reference('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

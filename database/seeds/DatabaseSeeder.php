@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductInputsTableSeeder::class);
         $this->call(ProductOutputsTableSeeder::class);
         $this->call(ProductPhotosTableSeeder::class);
-        $this->call(ChatGroupsTableSeeder::class);
-        $this->call(ChatMessagesFbSeeder::class);
-        $this->call(ChatMessagesLargeFbSeeder::class);
-        $this->call(ChatGroupInvitationsTableSeeder::class);
+        //$this->call(ChatGroupsTableSeeder::class);
+        //$this->call(ChatMessagesFbSeeder::class);
+        //$this->call(ChatMessagesLargeFbSeeder::class);
+        //$this->call(ChatGroupInvitationsTableSeeder::class);
 
     }
 }

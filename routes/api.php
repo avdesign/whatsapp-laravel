@@ -37,6 +37,13 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
         // Convites para Users
         Route::post('chat_invitations/{invitation_slug}', 'ChatInvitationUserController@store');
 
+        /** Routes Api/Open */
+        Route::group(['prefix' => 'open', 'namespace' => 'Open'], function (){
+            Route::get('products', 'ProductController@index');
+            Route::get('categories', 'CategoryController@index');
+        });
+
+
         //IS SELLER
         Route::group(['middleware' => ['can:is_seller']], function () {
             /** Permissão Vendedores */

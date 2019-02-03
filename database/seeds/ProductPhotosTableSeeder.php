@@ -26,7 +26,8 @@ class ProductPhotosTableSeeder extends Seeder
     {
         $this->allFakePhotos = $this->getFakePhotos();
         $products = Product::all();
-        $this->deteleAllPhotosProductsPath();
+         //ProductsTableSeeder da está removendo
+        //$this->deteleAllPhotosProductsPath();
         $self = $this;
         $products->each(function($products) use($self){
             $self->createPhotoDir($products);
@@ -34,12 +35,17 @@ class ProductPhotosTableSeeder extends Seeder
         });
     }
 
+    /*
+     * ProductsTableSeeder da está removendo
+     *
     private function deteleAllPhotosProductsPath()
     {
         $path = \CodeShopping\Models\ProductPhoto::PRODUCTS_PATH;
         \File::deleteDirectory(storage_path($path), true); // true não remover o dir
-    }    
-    
+    }
+    */
+
+
     private function createPhotoDir(Product $product)
     {
         $path = ProductPhoto::photosPath($product->id);
