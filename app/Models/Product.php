@@ -99,6 +99,8 @@ class Product extends Model
     public static function photoDir()
     {
         $dir = self::DIR_PRODUCTS;
+
+
         return $dir;
     }
 
@@ -111,7 +113,6 @@ class Product extends Model
             ]
         ];
     }
-
 
 
     public function categories(){

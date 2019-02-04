@@ -39,7 +39,7 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
 
         /** Routes Api/Open */
         Route::group(['prefix' => 'open', 'namespace' => 'Open'], function (){
-            Route::get('products', 'ProductController@index');
+            Route::resource('products', 'ProductController', ['only' => ['index', 'show']]);
             Route::get('categories', 'CategoryController@index');
         });
 

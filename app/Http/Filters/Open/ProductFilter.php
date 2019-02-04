@@ -10,6 +10,9 @@ class ProductFilter extends SimpleQueryFilter
     protected $simpleSorts = ['price', 'created_at'];
 
     protected function applySearch($value){
+        if (empty($value)) {
+            return;
+        }
         $this->query
             ->where('name', 'LIKE', "%$value%")
             ->orWhere('description', 'LIKE', '%$value%');
