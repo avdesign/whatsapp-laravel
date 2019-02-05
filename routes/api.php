@@ -66,6 +66,9 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
             Route::resource('chat_groups.link_invitations', 'ChatGroupInvitationController', ['except' => ['create', 'edit']]);
             Route::resource('chat_groups.invitations', 'ChatInvitationUserController', ['only' => ['index', 'show', 'update']]);
 
+            //Orders
+            Route::resource('orders', 'OrderController', ['only' => ['index', 'show', 'update']]);
+
         });
 
 

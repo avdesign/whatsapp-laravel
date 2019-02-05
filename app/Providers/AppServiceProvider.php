@@ -93,12 +93,9 @@ class AppServiceProvider extends ServiceProvider
                     'chat_group_name' => $group->name
                 ])
                 ->send();
-
-
-
-
-
         });
+
+
 
 
     }

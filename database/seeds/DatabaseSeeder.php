@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
         //$this->call(ChatMessagesFbSeeder::class);
         //$this->call(ChatMessagesLargeFbSeeder::class);
         //$this->call(ChatGroupInvitationsTableSeeder::class);
+        $this->call(OrdersTableSeeder::class);
+
 
     }
 }
