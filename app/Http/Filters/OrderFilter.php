@@ -7,22 +7,30 @@ use Mnabialek\LaravelEloquentFilter\Filters\SimpleQueryFilter;
 class OrderFilter extends SimpleQueryFilter
 {
     protected $simpleFilters = ['search'];
-    protected $simpleSorts = ['id', 'total', 'status', 'created_at'];
+    protected $simpleSorts = ['id', 'total', 'status', 'created_at', 'user', 'product'];
 
     protected function applySearch($value){
-        $this->query->where('total', 'LIKE', "%$value%");
+        $this->query
+            ->where('users.name', 'LIKE', "%$value%")
+            ->orWhere('products.name', 'LIKE', "%$value%");
     }
 
-    public function hasFilterParameter(){
-        $contains = $this->parser->getFilters()->contains(function ($filter){
-            return $filter->getField() === 'search' && !empty($filter->getValue());
-        });
-        return $contains;
+    protected function applySortUser($order){
+        $this->query->orderBy('users.name', $order);
     }
 
-    protected function applyInterval()
+    protected function applySortProduct($order){
+        $this->query->orderBy('products.name', $order);
+    }
+
+    public function apply($query)
     {
-        //Bsca por intervalo de datas
+        $query = $query
+            ->select('orders.*')
+            ->join('products', 'products.id', '=', 'orders.product_id')
+            ->join('users', 'users.id', '=', 'orders.user_id');
+        return parent::apply($query);
     }
+
 
 }

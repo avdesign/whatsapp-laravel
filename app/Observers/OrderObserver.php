@@ -16,7 +16,7 @@ class OrderObserver
      */
     public function created(Order $order)
     {
-        if (!runningInTerminal()){
+        if (!$this->runningInTerminal()){
             $user = $order->user;
             Mail::to($user)->send(new OrderCreatedMail($order));
         }
@@ -136,9 +136,6 @@ class OrderObserver
                     'order' => $order->id
                 ])
                 ->send();
-
-
-
         }
     }
 
@@ -150,10 +147,6 @@ class OrderObserver
     {
         return app()->runningInConsole() || app()->runningUnitTests;
     }
-
-
-
-
 
 
 }
