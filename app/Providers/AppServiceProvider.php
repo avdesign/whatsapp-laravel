@@ -6,6 +6,8 @@ namespace CodeShopping\Providers;
 use CodeShopping\Models\ChatGroupInvitation;
 use CodeShopping\Models\ChatInvitationUser;
 use CodeShopping\Firebase\NotificationType;
+use CodeShopping\Models\Order;
+use CodeShopping\Observers\OrderObserver;
 use Illuminate\Support\ServiceProvider;
 
 use CodeShopping\Models\ProductInput;
@@ -22,20 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /** +stock */
         ProductInput::created(function($input){
             $product = $input->product;
-            $product->stock += $input->amount;
-            $product->save();
+            $product->increaseStock($input->amount);
         });
-
-        // Executa quando cria
-        ProductOutput::created(function($output){
-            $product = $output->product;
-            $product->stock -= $output->amount;
-            if($product->stock <0){
-                throw new \Exception("Estoque de {$product->name} não pode ser negativo.");
-            }
-            $product->save();
+        /** -stock */
+        ProductOutput::created(function($input){
+            $product = $input->product;
+            $product->decreaseStock($input->amount);
         });
 
         // Executar depois de criado
@@ -93,7 +90,15 @@ class AppServiceProvider extends ServiceProvider
                     'chat_group_name' => $group->name
                 ])
                 ->send();
+
+            //push notificaton
         });
+
+        /**
+         * OrderObserver
+         */
+        Order::observe(OrderObserver::class);
+
 
 
 

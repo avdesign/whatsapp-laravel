@@ -115,6 +115,28 @@ class Product extends Model
     }
 
 
+
+    /*********************** Stock *************************/
+
+    public function increaseStock($amount)
+    {
+        $this->stock += $amount;
+        $this->save();
+    }
+
+    public function decreaseStock($amount)
+    {
+        $this->stock -= $amount;
+        if($this->stock < 0){
+            throw new \Exception("Estoque de {$this->name} não pode ser negativo.");
+        }
+        $this->save();
+    }
+
+
+
+    /********************** Relationships ******************/
+
     public function categories(){
         return $this->belongsToMany(Category::class);
     }

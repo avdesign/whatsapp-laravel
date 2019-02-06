@@ -17,12 +17,33 @@ class Order extends Model
 
     protected $fillable = ['amount', 'price', 'total', 'product_id', 'user_id'];
 
+    /**
+     * Criar Order
+     * @param array $data
+     */
     public static function createWithProduct(array $data)
     {
         $product = Product::find($data['product_id']);
         $data['price'] = $product->price;
         $data['total'] = $data['price'] * $data['amount'];
         self::create($data);
+    }
+
+    /**
+     * Observers/OrderObserver/handleIfSent($order) lookForUpdate()
+     * informa ao bd que o produto esta bloqueado enquanto não termna a transação
+     * @throws \Exception
+     */
+    public function updateWithProduct()
+    {
+        try {
+            \DB::beginTransaction();
+            $this->save();
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
