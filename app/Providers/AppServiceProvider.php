@@ -7,6 +7,7 @@ use CodeShopping\Models\ChatGroupInvitation;
 use CodeShopping\Models\ChatInvitationUser;
 use CodeShopping\Firebase\NotificationType;
 use CodeShopping\Models\Order;
+use CodeShopping\Models\Product;
 use CodeShopping\Observers\OrderObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         });
         /** -stock */
         ProductOutput::created(function($input){
+            /** @var Product $product */
             $product = $input->product;
             $product->decreaseStock($input->amount);
         });

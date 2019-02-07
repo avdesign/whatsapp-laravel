@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 
 namespace CodeShopping\Observers;
 
 
 use CodeShopping\Firebase\NotificationType;
-use CodeShopping\Mail\OrderCreatedMail;
+use CodeShopping\Mail\OrderCreated;
 use CodeShopping\Models\Order;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,7 +20,7 @@ class OrderObserver
     {
         if (!$this->runningInTerminal()){
             $user = $order->user;
-            Mail::to($user)->send(new OrderCreatedMail($order));
+            Mail::to($user)->send(new OrderCreated($order));
         }
     }
 
@@ -46,7 +48,7 @@ class OrderObserver
         $oldPaymentLink = $order->getOriginal('payment_link');
 
         if ($order->payment_link && $order->payment_link !== $oldPaymentLink) {
-            /** @var CloudMessagingFb $messaging */
+            /*
             $messaging = app(CloudMessagingFb::class);
             $messaging
                 ->setTitle("Link de pagamento do pedido.")
@@ -57,6 +59,7 @@ class OrderObserver
                     'order' => $order->id
                 ])
                 ->send();
+            */
         }
     }
 
@@ -73,7 +76,8 @@ class OrderObserver
 
         $oldStatus = $order->getOriginal('status');
         if ($oldStatus !== $order->status) {
-            /** @var CloudMessagingFb $messaging */
+
+            /*
             $messaging = app(CloudMessagingFb::class);
             $messaging
                 ->setTitle("Seu pedido foi aprovado.")
@@ -84,6 +88,7 @@ class OrderObserver
                     'order' => $order->id
                 ])
                 ->send();
+            */
         }
     }
 
@@ -99,7 +104,7 @@ class OrderObserver
              * lookForUpdate()
              * informa ao bd que o produto esta bloqueado enquanto não termna a transação
              */
-            $product =$order->product()->lookForUpdate()->first();
+            $product =$order->product()->lockForUpdate()->first();
             $product->increaseStock($order->amount);
         }
     }
@@ -116,8 +121,9 @@ class OrderObserver
              * lookForUpdate()
              * informa ao bd que o produto esta bloqueado enquanto não termna a transação
              */
-            $product =$order->product()->lookForUpdate()->first();
-            $product->decreaseStock($order->amount);
+            $product = $order->product()->lockForUpdate()->first();
+            $product->increaseStock($order->amount);
+
 
             /** Verifico se o user tem um token */
             $token = $order->user->profile->device_token;
@@ -125,7 +131,7 @@ class OrderObserver
                 return;
             }
 
-            /** @var CloudMessagingFb $messaging */
+            /*
             $messaging = app(CloudMessagingFb::class);
             $messaging
                 ->setTitle("Seu produto {$order->product->name} enviado.")
@@ -136,6 +142,7 @@ class OrderObserver
                     'order' => $order->id
                 ])
                 ->send();
+            */
         }
     }
 
@@ -145,7 +152,7 @@ class OrderObserver
      */
     private function runningInTerminal()
     {
-        return app()->runningInConsole() || app()->runningUnitTests;
+        return app()->runningInConsole() || app()->runningUnitTests();
     }
 
 

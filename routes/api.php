@@ -39,8 +39,9 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function () {
 
         /** Routes Api/Open */
         Route::group(['prefix' => 'open', 'namespace' => 'Open'], function (){
-            Route::resource('products', 'ProductController', ['only' => ['index', 'show']]);
             Route::get('categories', 'CategoryController@index');
+            Route::resource('products', 'ProductController', ['only' => ['index', 'show']]);
+            Route::resource('orders', 'OrderController', ['only' => ['index', 'show', 'store', 'update']]);
         });
 
 

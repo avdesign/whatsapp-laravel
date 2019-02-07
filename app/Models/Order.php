@@ -26,7 +26,7 @@ class Order extends Model
         $product = Product::find($data['product_id']);
         $data['price'] = $product->price;
         $data['total'] = $data['price'] * $data['amount'];
-        self::create($data);
+        return self::create($data);
     }
 
     /**
