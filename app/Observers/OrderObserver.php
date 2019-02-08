@@ -122,7 +122,7 @@ class OrderObserver
              * informa ao bd que o produto esta bloqueado enquanto não termna a transação
              */
             $product = $order->product()->lockForUpdate()->first();
-            $product->increaseStock($order->amount);
+            $product->decreaseStock($order->amount);
 
 
             /** Verifico se o user tem um token */

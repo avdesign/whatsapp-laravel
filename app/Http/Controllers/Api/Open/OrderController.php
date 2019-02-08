@@ -13,7 +13,9 @@ class OrderController extends Controller
     public function index()
     {
         $userId = \Auth::guard('api')->user()->id;
-        $orders = Order::where('user_id', $userId)->paginate();
+        $orders = Order::where('user_id', $userId)
+            ->orderBy('id', 'desc')
+            ->paginate(5);
 
         return OpenOrderResource::collection($orders);
     }
