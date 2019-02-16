@@ -86,7 +86,7 @@ class SendMessagesChatGroupMembers
         $users = $chatGroup->users()->whereHas('profile', function ($query) use($from) {//pego o relacionamento de users->profile
             $query
                 ->whereNotNull('device_token') // não pego os campos null
-                ->whereNotIn('id', [$from->profile-id]) // Não pego o usuário que enviou
+                ->whereNotIn('id', [$from->profile->id]) // Não pego o usuário que enviou
                 ->get();
         });
 

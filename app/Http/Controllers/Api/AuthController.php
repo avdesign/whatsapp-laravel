@@ -18,6 +18,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        dd(env('BASE_PRODUCTS_URL'));
         $this->validateLogin($request);
 
         $credentials = $this->credentials($request);

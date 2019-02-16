@@ -26,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+
         //Regras para os vendedores
         \Gate::define('is_seller', function($user){
             return $user->role == User::ROLE_SELLER;

@@ -41,7 +41,7 @@ class ChatMessageFb
             'type' => $data['type'],
             'content' => $data['content'],
             'created_at' => ['.sv' => 'timestamp'], // firebase gera timestamp
-            'user_id' => $data['firebase_uid']->profile->firebase_uid
+            'user_id' => $data['user']->profile->firebase_uid
         ]);
 
         $this->setLastMessage($newReference->getKey());
